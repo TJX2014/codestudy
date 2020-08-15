@@ -1,0 +1,7 @@
+安装：
+sudo apt install systemtap
+
+编译：(-g -O0保证stp中的$p和main.c中的*p能关联起来)
+gcc main.c -g -O0 -lpthread
+
+sudo stap -g main.stp
