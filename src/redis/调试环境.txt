@@ -1,0 +1,24 @@
+make CFLAGS="-g -O0"
+
+gdbserver :1234 src/redis-server 
+
+vscode配置文件：
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) 启动",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/redis-server",
+            "miDebuggerServerAddress": "localhost:1234",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb"
+        }
+    ]
+}
+

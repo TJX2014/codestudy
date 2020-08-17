@@ -1,0 +1,11 @@
+命令行分析：
+call(client * c, int flags) (/home/xiaoxing/vscode/redis-6.0.6/src/server.c:3272)
+processCommand(client * c) (/home/xiaoxing/vscode/redis-6.0.6/src/server.c:3679)
+processCommandAndResetClient(client * c) (/home/xiaoxing/vscode/redis-6.0.6/src/networking.c:1797)
+processInputBuffer(client * c) (/home/xiaoxing/vscode/redis-6.0.6/src/networking.c:1879)
+readQueryFromClient(connection * conn) (/home/xiaoxing/vscode/redis-6.0.6/src/networking.c:1962)
+callHandler(connection * conn, ConnectionCallbackFunc handler) (/home/xiaoxing/vscode/redis-6.0.6/src/connhelpers.h:79)
+connSocketEventHandler(struct aeEventLoop * el, int fd, void * clientData, int mask) (/home/xiaoxing/vscode/redis-6.0.6/src/connection.c:281)
+aeProcessEvents(aeEventLoop * eventLoop, int flags) (/home/xiaoxing/vscode/redis-6.0.6/src/ae.c:479)
+aeMain(aeEventLoop * eventLoop) (/home/xiaoxing/vscode/redis-6.0.6/src/ae.c:539)
+main(int argc, char ** argv) (/home/xiaoxing/vscode/redis-6.0.6/src/server.c:5213)
