@@ -1,0 +1,6 @@
+sudo strace -ff -p 11475 -o out
+
+notice:
+-ff指定每个子进程输出
+-o out
+ouput prefix is out

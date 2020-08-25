@@ -1,0 +1,63 @@
+git clone git@github.com:apache/iceberg.git
+gradle build
+./gradlew build  -Dorg.gradle.internal.http.connectionTimeout=90000 -Dorg.gradle.internal.http.socketTimeout=90000
+
+
+http://iceberg.apache.org/getting-started/
+./gradlew :iceberg-spark3:assemble -x test
+
+spark-shell --packages org.apache.iceberg:iceberg-spark-runtime:0.8.0-incubating
+./gradlew assemble
+spark-shell --jars spark-runtime/build/libs/iceberg-spark-runtime-8c05a2f.jar
+
+spark-sql --conf spark.sql.catalog.spark_catalog=org.apache.iceberg.spark.SparkSessionCatalog \
+    --conf spark.sql.catalog.spark_catalog.type=hive \
+    --conf spark.sql.catalog.local=org.apache.iceberg.spark.SparkCatalog \
+    --conf spark.sql.catalog.local.type=hadoop \
+    --conf spark.sql.catalog.local.uri=$PWD/warehouse
+
+spark-sql --packages org.apache.iceberg:iceberg-spark3-runtime:0.9.0 \
+    --conf spark.sql.catalog.spark_catalog=org.apache.iceberg.spark.SparkSessionCatalog \
+    --conf spark.sql.catalog.spark_catalog.type=hive \
+    --conf spark.sql.catalog.local=org.apache.iceberg.spark.SparkCatalog \
+    --conf spark.sql.catalog.local.type=hadoop \
+    --conf spark.sql.catalog.local.uri=$PWD/warehouse
+
+-- local is the path-based catalog defined above
+CREATE TABLE local.db.table (id bigint, data string) USING iceberg
+INSERT INTO local.db.table VALUES (1, 'a'), (2, 'b'), (3, 'c');
+INSERT INTO local.db.table SELECT id, data FROM source WHERE length(data) = 1;
+
+spark.table("source").select("id", "data")
+     .writeTo("local.db.table").append()
+
+SELECT count(1) as count, data
+FROM local.db.table
+GROUP BY data
+
+SELECT * FROM local.db.table.snapshots
+
+val df = spark.table("local.db.table")
+df.count()
+
+
+https://blog.csdn.net/xuronghao/article/details/106184831
+
+import org.apache.iceberg.catalog.TableIdentifier
+import org.apache.iceberg.spark.SparkSchemaUtil
+
+val catalog = new HiveCatalog(spark.sparkContext.hadoopConfiguration)
+
+val data = Seq((1, "a"), (2, "b"), (3, "c")).toDF("id", "data")
+val schema = SparkSchemaUtil.convert(data.schema)
+
+val name = TableIdentifier.of("default", "test_table")
+val table = catalog.createTable(name, schema)
+
+data.write.format("iceberg").mode("append").save("default.test_table")
+
+// read the table
+spark.read.format("iceberg").load("default.test_table")
+
+spark.read.format("iceberg").load("default.test_table").createOrReplaceTempView("test_table")
+spark.sql("""SELECT count(1) FROM test_table""")
