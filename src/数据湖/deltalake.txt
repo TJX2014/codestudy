@@ -3,6 +3,7 @@ git clone git@github.com:delta-io/delta.git
 build/sbt package
 
 
+
 https://docs.delta.io/latest/quick-start.html
 
 spark-shell  --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"

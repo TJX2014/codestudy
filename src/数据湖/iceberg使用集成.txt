@@ -10,11 +10,15 @@ spark-shell --packages org.apache.iceberg:iceberg-spark-runtime:0.8.0-incubating
 ./gradlew assemble
 spark-shell --jars spark-runtime/build/libs/iceberg-spark-runtime-8c05a2f.jar
 
+apache-iceberg-0.9.0/spark-runtime/build/libs/iceberg-spark-runtime-0.9.0.jar
+cp apache-iceberg-0.9.0/spark3/build/libs/iceberg-spark3-0.9.0.jar spark/assembly/target/scala-2.12/jars/
+
 spark-sql --conf spark.sql.catalog.spark_catalog=org.apache.iceberg.spark.SparkSessionCatalog \
     --conf spark.sql.catalog.spark_catalog.type=hive \
     --conf spark.sql.catalog.local=org.apache.iceberg.spark.SparkCatalog \
     --conf spark.sql.catalog.local.type=hadoop \
-    --conf spark.sql.catalog.local.uri=$PWD/warehouse
+    --conf spark.sql.catalog.local.uri=$PWD/warehouse \
+    --conf spark.sql.catalog.local.warehouse=/tmp/ww
 
 spark-sql --packages org.apache.iceberg:iceberg-spark3-runtime:0.9.0 \
     --conf spark.sql.catalog.spark_catalog=org.apache.iceberg.spark.SparkSessionCatalog \
