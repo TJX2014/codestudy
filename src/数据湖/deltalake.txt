@@ -1,0 +1,22 @@
+git clone git@github.com:delta-io/delta.git
+
+build/sbt package
+
+
+https://docs.delta.io/latest/quick-start.html
+
+spark-shell  --conf "spark.sql.extensions=io.delta.sql.DeltaSparkSessionExtension" --conf "spark.sql.catalog.spark_catalog=org.apache.spark.sql.delta.catalog.DeltaCatalog"
+
+val data = spark.range(6, 10)
+data.write.format("delta").mode("append").save("file:///tmp/delta-table")
+val df = spark.read.format("delta").load("file:///tmp/delta-table")
+df.show
+
+import io.delta.tables._
+import org.apache.spark.sql.functions._
+val deltaTable = DeltaTable.forPath(spark, "file:///tmp/delta-table")
+
+按照时间删除文件：
+sql("set spark.databricks.delta.retentionDurationCheck.enabled = false").show
+deltaTable.vacuum(0.1)
+deltaTable.history.show
