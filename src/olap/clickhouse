@@ -1,5 +1,15 @@
 编译部署：
 https://clickhouse.tech/docs/en/development/build/
 
+https://zhuanlan.zhihu.com/p/53982090
+
 代码分析：
 https://www.jianshu.com/p/a6c1f761b84d
+
+深入：
+向量化执行引擎，SIMD，基于llvm的动态代码生成
+
+export CC=gcc-9
+export CXX=g++-9
+
+cmake ../ -DUSE_STATIC_LIBRARIES=0 -DSPLIT_SHARED_LIBRARIES=1 -DCLICKHOUSE_SPLIT_BINARY=1 -DCMAKE_BUILD_TYPE=Debug
