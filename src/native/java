@@ -1,0 +1,1 @@
+java  -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly -Xcomp -XX:CompileCommand='print, *.main' -cp 
