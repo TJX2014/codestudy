@@ -1,0 +1,12 @@
+创建一个文件作为交换分区
+sudo fallocate -l 10G /home/xiaoxing/new_volume/swapfile
+
+更改权限更安全
+sudo chmod 600 /home/xiaoxing/new_volume/swapfile
+
+挂载交换分区
+sudo mkswap /home/xiaoxing/new_volume/swapfile
+
+检查交换分区是否生效
+sudo swapon --show
+free -g
