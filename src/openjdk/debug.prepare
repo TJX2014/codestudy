@@ -1,0 +1,9 @@
+https://github.com/openjdk/jdk/tree/jdk8-b120
+
+https://github.com/Tencent/TencentKona-8
+
+configure: WARNING: Ignoring CFLAGS(-Wno-error) found in environment. Use --with-extra-cflags
+configure: WARNING: Ignoring CXXFLAGS(-Wno-error) found in environment. Use --with-extra-cxxflags
+
+bash configure --with-extra-cflags=-Wno-error  --with-extra-cxxflags=-Wno-error --with-debug-level=slowdebug
+make CONF=linux-x86_64-normal-server-slowdebug
