@@ -27,3 +27,12 @@ sudo apt-get install -y clickhouse-server clickhouse-client
 
 sudo service clickhouse-server start
 clickhouse-client
+
+使用：
+CREATE TABLE datetime_test(c1 datetime) ENGINE=Memory;
+insert into datetime_test values('2019-01-01 11:11:22');
+select c1, toTypeName(c1) from datetime_test;
+
+MergeTree表：
+create table merge_tree_table(couterId int, eventDate datetime, count int) engine = MergeTree() order by (couterId, eventDate, intHash32(couterId));
+insert into merge_tree_table values(1, '2020-01-02 01:01:02', 222);
