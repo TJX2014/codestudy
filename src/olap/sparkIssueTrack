@@ -1,7 +1,7 @@
 sql("select /*+ broadcast(b)*/a.x2 as ax1,a.x1,b.x2,b.x1 from t_orc1 a left join t_orc2 b on a.x1=b.x1  limit 10").show
 
 Request(GET //localhost:4040/jobs/job/?id=8)@845e9d4
-url追踪链路：
+url invoke chain:
 render:398, JobPage (org.apache.spark.ui.jobs)
 $anonfun$attachPage$1:89, WebUI (org.apache.spark.ui)
 apply:-1, 841243494 (org.apache.spark.ui.WebUI$$Lambda$1570)
