@@ -5,7 +5,7 @@ https://github.com/Tencent/TencentKona-8
 configure: WARNING: Ignoring CFLAGS(-Wno-error) found in environment. Use --with-extra-cflags
 configure: WARNING: Ignoring CXXFLAGS(-Wno-error) found in environment. Use --with-extra-cxxflags
 
-bash configure --with-extra-cflags=-Wno-error  --with-extra-cxxflags=-Wno-error --with-debug-level=slowdebug
+bash configure --with-extra-cflags=-Wno-error  --with-extra-cxxflags=-Wno-error --with-debug-level=slowdebug --with-native-debug-symbols=internal
 make CONF=linux-x86_64-normal-server-slowdebug
 
 https://zhuanlan.zhihu.com/p/50220757
@@ -13,7 +13,74 @@ https://zhuanlan.zhihu.com/p/50220757
 
  gdb --args  ./TencentKona-8/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java -Xms10m -Xmx20m -XX:-UseCompressedOops -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -cp ~/vscode/codestudy/target/classes/ nio_mmap.NioAndMmap
 
+
 gdb --args ./TencentKona-8/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java -Xms10m -Xmx20m -XX:-UseCompressedOops -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1LogLevel=finest -XX:+PrintGCDetails -cp ~/vscode/codestudy/target/classes/ nio_mmap.NioAndMmap
 
 gdb中断点：
 b G1ParScanThreadState::copy_to_survivor_space
+
+加断点：
+b init.cpp:95
+运行：
+
+jvm启动流程：
+入口：
+jdk/src/share/bin/java.c
+JavaMain
+线程：
+./hotspot/src/share/vm/runtime/thread.cpp
+
+虚拟机启动到执行的细节：
+https://www.cnblogs.com/kelthuzadx/p/10700291.html
+
+https://rqsir.github.io/2019/04/19/openjdk-8-%E4%BD%BF%E7%94%A8Clion%E8%B0%83%E8%AF%95%E6%BA%90%E7%A0%81/
+
+clion中调试：
+-cp /home/xiaoxing/idea-workspace/test/target/classes/ nio_mmap.NioAndMmap
+
+静态方法调用：
+JavaCalls::call javaCalls.cpp:307
+JavaCalls::call_static javaCalls.cpp:273
+JavaCalls::call_static javaCalls.cpp:293
+NativeLookup::lookup_style nativeLookup.cpp:190
+NativeLookup::lookup_entry nativeLookup.cpp:258
+NativeLookup::lookup_base nativeLookup.cpp:374
+NativeLookup::lookup nativeLookup.cpp:390
+InterpreterRuntime::prepare_native_call interpreterRuntime.cpp:1271
+<unknown> 0x00007fe07102f660
+<unknown> 0x0000000000000000
+
+其他初始化：
+JavaCalls::call_helper javaCalls.cpp:409
+os::os_exception_wrapper os_linux.cpp:5490
+JavaCalls::call javaCalls.cpp:307
+InstanceKlass::call_class_initializer_impl instanceKlass.cpp:1246
+InstanceKlass::call_class_initializer instanceKlass.cpp:1214
+InstanceKlass::initialize_impl instanceKlass.cpp:937
+InstanceKlass::initialize instanceKlass.cpp:574
+LinkResolver::resolve_static_call linkResolver.cpp:868
+LinkResolver::resolve_invokestatic linkResolver.cpp:1532
+LinkResolver::resolve_invoke linkResolver.cpp:1504
+InterpreterRuntime::resolve_invoke interpreterRuntime.cpp:717
+<unknown> 0x00007fe07104be07
+TemplateInterpreter::_active_table 0x00007fe0880a5ae0
+<unknown> 0x00007fe07104bcc3
+
+import method: JavaCalls::call_xxx
+hotspot/src/share/vm/services/memoryPool.cpp:    JavaCalls::call_static(&result,
+hotspot/src/share/vm/services/memoryService.cpp:  JavaCalls::call_special(&result,
+hotspot/src/share/vm/services/memoryManager.cpp:    JavaCalls::call_static(&result,
+hotspot/src/share/vm/asm/assembler.cpp:    // The code in JavaCalls::call() checks that there is at least n pages
+hotspot/src/share/vm/prims/jvmtiEnv.cpp:      JavaCalls::call_special(&res,
+hotspot/src/share/vm/prims/jvm.cpp:  JavaCalls::call_virtual(&r,
+hotspot/src/share/vm/prims/jvm.cpp:      JavaCalls::call(&result, m, &args, CHECK_false);
+hotspot/src/share/vm/prims/jvm.cpp:  JavaCalls::call_special(&result, obj, KlassHandle(THREAD, pd_klass),
+hotspot/src/share/vm/prims/jvm.cpp:  JavaCalls::call(&result, m, &args, THREAD);
+hotspot/src/share/vm/prims/jvm.cpp:  JavaCalls::call_virtual(&result,
+hotspot/src/share/vm/prims/jvm.cpp:  JavaCalls::call_default_constructor(thread, m, obj, CHECK_NULL);
+hotspot/src/share/vm/prims/jni.cpp:      JavaCalls::call_static(&result, k,
+hotspot/src/share/vm/prims/jni.cpp:        JavaCalls::call_virtual(&result,
+hotspot/src/share/vm/prims/jni.cpp:  JavaCalls::call(result, method, &java_args, CHECK);
+hotspot/src/share/vm/prims/jni.cpp:  JavaCalls::call(result, method, &java_args, CHECK);
+hotspot/src/share/vm/prims/nativeLookup.cpp:  JavaCalls::call_static(&result,
+hotspot/src/share/vm/memory/universe.cpp:    JavaCalls::call_static(
