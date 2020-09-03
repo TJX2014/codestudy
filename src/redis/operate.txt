@@ -16,3 +16,35 @@ OK
 redis> get foo
 "bar"
 
+使用场景：
+https://database.51cto.com/art/201901/590298.htm
+string类型：
+set string:order:100 order-100
+查看key类型：
+type string:order:100
+
+list类型：
+lpush list:order:pay 100100 201010 202001
+左边/右边出队列：lpop list:order:pay/rpop list:order:pay
+扫描所有数据：
+lrange list:order:pay 0 -1
+
+hash类型：
+hmset hash:mall:page banana 111 apple 222 orange 331
+获取apple对应的值：
+hget hash:mall:page apple
+获取所有：
+hgetall hash:mall:page
+
+集合：
+sadd set:marketing:product:available:ids 1000100 1000120 1000130 1000140 1000150 1000160
+sadd set:marketing:activity:product:ids 1000100 1000120 1000130 1000140 1000200 1000300
+集合的交并差，sinter,sunion,sdiff
+sinter set:marketing:product:available:ids set:marketing:activity:product:ids
+
+排序集合：
+zadd merket:group:codes 5 ccc 7 aaa 3 bbb
+按照score正序，搜索范围是0到1000：
+zrangebyscore merket:group:codes 0 1000 withscores
+按照score逆序，搜索范围是1000到0：
+zrevrangebyscore merket:group:codes 1000 0 withscores
