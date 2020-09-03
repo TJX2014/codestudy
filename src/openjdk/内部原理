@@ -1,4 +1,0 @@
-https://github.com/openjdk/jdk/tree/jdk8-b120
-
-
-bash configure --with-boot-jdk=/usr/lib/java/jdk1.6.0_06 --with-target-bits=64 --enable-ccache --with-jvm-variants=server  --with-boot-jdk-jvmargs="-Xlint:deprecation -Xlint:unchecked" --disable-warnings-as-errors --with-debug-level=slowdebug

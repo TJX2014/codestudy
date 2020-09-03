@@ -1,0 +1,5 @@
+apply and recycle:
+org.apache.flink.runtime.io.network.buffer.LocalBufferPool#requestBuffer
+
+org.apache.flink.runtime.io.network.buffer.LocalBufferPool.SubpartitionBufferRecycler#recycle
+

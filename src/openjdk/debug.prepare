@@ -1,0 +1,19 @@
+https://github.com/openjdk/jdk/tree/jdk8-b120
+
+https://github.com/Tencent/TencentKona-8
+
+configure: WARNING: Ignoring CFLAGS(-Wno-error) found in environment. Use --with-extra-cflags
+configure: WARNING: Ignoring CXXFLAGS(-Wno-error) found in environment. Use --with-extra-cxxflags
+
+bash configure --with-extra-cflags=-Wno-error  --with-extra-cxxflags=-Wno-error --with-debug-level=slowdebug
+make CONF=linux-x86_64-normal-server-slowdebug
+
+https://zhuanlan.zhihu.com/p/50220757
+--with-native-debug-symbols=internal
+
+ gdb --args  ./TencentKona-8/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java -Xms10m -Xmx20m -XX:-UseCompressedOops -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -cp ~/vscode/codestudy/target/classes/ nio_mmap.NioAndMmap
+
+gdb --args ./TencentKona-8/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java -Xms10m -Xmx20m -XX:-UseCompressedOops -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1LogLevel=finest -XX:+PrintGCDetails -cp ~/vscode/codestudy/target/classes/ nio_mmap.NioAndMmap
+
+gdb中断点：
+b G1ParScanThreadState::copy_to_survivor_space
