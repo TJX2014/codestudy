@@ -84,3 +84,12 @@ hotspot/src/share/vm/prims/jni.cpp:  JavaCalls::call(result, method, &java_args,
 hotspot/src/share/vm/prims/jni.cpp:  JavaCalls::call(result, method, &java_args, CHECK);
 hotspot/src/share/vm/prims/nativeLookup.cpp:  JavaCalls::call_static(&result,
 hotspot/src/share/vm/memory/universe.cpp:    JavaCalls::call_static(
+
+构造对象:
+JavaCalls::call_helper() at javaCalls.cpp:394 0x7ffff6606646	
+os::os_exception_wrapper() at os_linux.cpp:5,490 0x7ffff68a6f22	
+JavaCalls::call() at javaCalls.cpp:307 0x7ffff660607a	
+Reflection::invoke() at reflection.cpp:1,077 0x7ffff693cd46	
+Reflection::invoke_constructor() at reflection.cpp:1,177 0x7ffff693d528	
+JVM_NewInstanceFromConstructor() at jvm.cpp:4,319 0x7ffff6696e66	
+Java_sun_reflect_NativeConstructorAccessorImpl_newInstance0() at NativeAccessors.c:39 0x7ffff53cd4bf	

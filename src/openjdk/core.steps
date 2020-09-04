@@ -1,0 +1,49 @@
+调用主方法:
+/jdk/src/share/bin/java.c:478
+478         (*env)->CallStaticVoidMethod(env, mainClass, mainID, mainArgs);
+
+java call entrypoint:
+hotspot/src/share/vm/runtime/javaCalls.cpp:394
+
+open file:
+Java_java_io_FileInputStream_open0() at FileInputStream.c:61 0x7ffff53ccb61	
+
+new instance:
+JVM_NewInstanceFromConstructor() at jvm.cpp:4,319 0x7ffff6696e66	
+
+judge `_invokestatic`, `_invokespecial`, `_invokevirtual`, `_invokehandle`, `_invokedynamic`, `_invokeinterface`
+hotspot/src/share/vm/interpreter/linkResolver.cpp:1504
+
+InstanceKlass::call_class_initializer:
+InstanceKlass::call_class_initializer (this=0x800047d68, __the_thread__=0x7ffff000e800) at /home/xiaoxing/Clion-Workspace/TencentKona-8/hotspot/src/share/vm/oops/instanceKlass.cpp:1214
+
+define class:
+hotspot/src/share/vm/prims/jvm.cpp:1154:
+// common code for JVM_DefineClass() and JVM_DefineClassWithSource()
+// and JVM_DefineClassWithSourceCond()
+static jclass jvm_define_class_common(JNIEnv *env, const char *name,
+                                      jobject loader, const jbyte *buf,
+                                      jsize len, jobject pd, const char *source,
+                                      jboolean verify, TRAPS) {
+ClassFileParser::parseClassFile() at classFileParser.cpp:4,012 0x7ffff632e0c5	
+ClassFileParser::parseClassFile() at classFileParser.hpp:479 0x7ffff633da67	
+SystemDictionary::resolve_from_stream() at systemDictionary.cpp:1,111 0x7ffff69dbccb	
+jvm_define_class_common() at jvm.cpp:1,154 0x7ffff6679160	
+JVM_DefineClassWithSource() at jvm.cpp:1,174 0x7ffff667968c	
+Java_java_lang_ClassLoader_defineClass1() at ClassLoader.c:150 0x7ffff53cb60a	
+
+find_class_from_class_loader() at jvm.cpp:4,248 0x7ffff66961f7	:
+// Shared JNI/JVM entry points //////////////////////////////////////////////////////////////
+jclass find_class_from_class_loader(JNIEnv* env, Symbol* name, jboolean init,
+                                    Handle loader, Handle protection_domain,
+                                    jboolean throwError, TRAPS) {
+
+输入/输出:
+jdk/src/solaris/native/java/io/io_util_md.c:112
+112             fd = handleOpen(ps, flags, 0666);
+void
+fileOpen(JNIEnv *env, jobject this, jstring path, jfieldID fid, int flags)
+{
+    WITH_PLATFORM_STRING(env, path, ps) {
+        FD fd;
+

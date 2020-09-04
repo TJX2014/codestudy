@@ -7,3 +7,14 @@ $anonfun$attachPage$1:89, WebUI (org.apache.spark.ui)
 apply:-1, 841243494 (org.apache.spark.ui.WebUI$$Lambda$1570)
 doGet:81, JettyUtils$$anon$1 (org.apache.spark.ui)
 service:687, HttpServlet (javax.servlet.http)
+
+deadlock: https://issues.apache.org/jira/browse/SPARK-32779
+init schema：
+./schematool -initSchema -dbType mysql
+
+-Phive -Phive-thriftserver -Dhive.version=3.1.2
+
+mvn  -Phive -Phive-thriftserver -Dhive.version=3.1 -DskipTests clean package
+
+spark-shell --conf "spark.sql.hive.metastore.jars=${HIVE_HOME}/lib/*" --conf spark.sql.hive.metastore.version=3.1
+
