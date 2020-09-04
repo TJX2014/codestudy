@@ -1,0 +1,25 @@
+sudo apt-get install mongodb
+
+客户端
+mongo
+
+新增文档:
+db.col.insert({title: 'MongoDB 教程', 
+    description: 'MongoDB 是一个 Nosql 数据库',
+    by: '菜鸟教程',
+    url: 'http://www.runoob.com',
+    tags: ['mongodb', 'database', 'NoSQL'],
+    likes: 100
+})
+
+更新文档:
+db.col.update({'title':'MongoDB 教程'},{$set:{'title':'MongoDB'}})
+
+查找col的文档:
+db.col.find()
+
+查找 by 值为 菜鸟教程 或键 title 值为 MongoDB 教程
+db.col.find({$or:[{"by":"菜鸟教程"},{"title": "MongoDB 教程"}]}).pretty()
+
+删除文档:
+db.col.remove({'title':'MongoDB 教程'})
