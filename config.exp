@@ -1,0 +1,3 @@
+log4j config through param:
+`-Dlog4j2.debug` is same as `-Dlog4j2.debug=true`
+

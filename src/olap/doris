@@ -1,17 +1,48 @@
+git clone git@github.com:apache/incubator-doris.git
+
 安装:
 https://doris.apache.org/master/zh-CN/installing/compilation.html#%E4%BD%BF%E7%94%A8-docker-%E5%BC%80%E5%8F%91%E9%95%9C%E5%83%8F%E7%BC%96%E8%AF%91%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89
+rowset_meta.h:29:10: fatal error: json2pb/json_to_pb.h
+
 
 容器编译环境:
-docker pull apachedoris/doris-dev:build-env
+docker run -it -v /home/xiaoxing/idea-workspace/incubator-doris:/home/xiaoxing/idea-workspace/incubator-doris -v /home/xiaoxing/.m2/:/root/.m2 apachedoris/doris-dev:build-env-1.2 bash
 
 源码下载:
 wget https://dist.apache.org/repos/dist/dev/incubator/doris/0.9/0.9.0-incubating-rc02/apache-doris-0.9.0.rc02-incubating-src.tar.gz
+ubuntu编译第三方依赖缺少:
+/var/local/thirdparty/installed/include/butil/containers/flat_map.h
+/var/local/thirdparty/installed/include/bthread/
+/var/local/thirdparty/installed/include/bvar
+/var/local/thirdparty/installed/include/arrow
+/var/local/thirdparty/installed/include/parquet
 
-调试工具:
+/var/local/thirdparty/installed/lib64/libparquet.a
+
+调试环境:
 http://doris.incubator.apache.org/master/zh-CN/developer-guide/debug-tool.html#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87
+
+clion中cmake导入环境变量:
+DORIS_THIRDPARTY=/var/local/thirdparty;DORIS_GCC_HOME=/usr
+/home/xiaoxing/clion-2020.2.1/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/xiaoxing/idea-workspace/incubator-doris/be
+
+/home/xiaoxing/clion-2020.2.1/bin/cmake/linux/bin/cmake --build /home/xiaoxing/idea-workspace/incubator-doris/be/cmake-build-debug --target palo_be -- -j 6
+
+需要解决异常:
+/var/local/thirdparty/installed//lib/libcurl.a(libcurl_la-http2.o):http2.c:(.text+0x52f): 跟着更多未定义的参考到 nghttp2_session_get_stream_user_data
+/var/local/thirdparty/installed//lib/libcurl.a(libcurl_la-openssl.o)：在函数‘ossl_connect_step1’中：
+openssl.c:(.text+0xb71)：对‘TLS_client_method’未定义的引用
 
 开发环境:
 http://doris.incubator.apache.org/master/zh-CN/developer-guide/fe-idea-dev.html#_1-%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87
 
-使用:
+使用: -Dlog4j2.debug
+master: $DORIS_HOME/fe/doris-meta/
+org.apache.doris.PaloFe
+查看是否成功:http://localhost:8030/api/bootstrap
+http://localhost:8030/system?path=//frontends 
+
+worker: $DORIS_HOME/be/storage
+$DORIS_HOME/be/lib/palo_be
+bin/start_be.sh --daemon
 

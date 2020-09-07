@@ -1,0 +1,20 @@
+void java_lang_Class::create_mirror(KlassHandle k, Handle class_loader,
+                                    Handle protection_domain, TRAPS) {
+  assert(k->java_mirror() == NULL, "should only assign mirror once");
+  // Use this moment of initialization to cache modifier_flags also,
+  // to support Class.getModifiers().  Instance classes recalculate
+  // the cached flags after the class file is parsed, but before the
+  // class is put into the system dictionary.
+  int computed_modifiers = k->compute_modifier_flags(CHECK);
+  k->set_modifier_flags(computed_modifiers);
+  // Class_klass has to be loaded because it is used to allocate
+  // the mirror.
+  if (SystemDictionary::Class_klass_loaded()) {
+    // Allocate mirror (java.lang.Class instance)
+    Handle mirror = InstanceMirrorKlass::cast(SystemDictionary::Class_klass())->allocate_instance(k, CHECK);
+
+->
+instanceOop InstanceMirrorKlass::allocate_instance(KlassHandle k, TRAPS) {
+  // Query before forming handle.
+  int size = instance_size(k);
+
