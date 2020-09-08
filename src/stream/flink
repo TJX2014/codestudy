@@ -3,8 +3,7 @@ org.apache.flink.runtime.io.network.buffer.LocalBufferPool#requestBuffer
 
 org.apache.flink.runtime.io.network.buffer.LocalBufferPool.SubpartitionBufferRecycler#recycle
 
-
-java -cp $FLINK_HOME/lib/*:$FLINK_HOME/opt/*:$HADOOP_HOME/share/hadoop/hdfs/*:$HADOOP_HOME/share/hadoop/tools/lib/*:$HADOOP_HOME/share/hadoop/yarn/*:$HADOOP_HOME/share/hadoop/common/*:$HADOOP_HOME/etc/hadoop org.apache.flink.table.client.SqlClient embedded
+java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:39603,suspend=y,server=y -cp $FLINK_HOME/lib/*:$FLINK_HOME/opt/*:$HADOOP_HOME/share/hadoop/hdfs/*:$HADOOP_HOME/share/hadoop/tools/lib/*:$HADOOP_HOME/share/hadoop/yarn/*:$HADOOP_HOME/share/hadoop/common/*:$HADOOP_HOME/etc/hadoop org.apache.flink.table.client.SqlClient embedded -e /home/xiaoxing/datahub/flink-1.11.1/conf/sql-client-defaults.yaml
 
 账单source:
 drop table bill_info;

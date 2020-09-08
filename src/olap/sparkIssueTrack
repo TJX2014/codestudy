@@ -18,3 +18,7 @@ mvn  -Phive -Phive-thriftserver -Dhive.version=3.1 -DskipTests clean package
 
 spark-shell --conf "spark.sql.hive.metastore.jars=${HIVE_HOME}/lib/*" --conf spark.sql.hive.metastore.version=3.1
 
+https://issues.apache.org/jira/browse/SPARK-32816
+val df = spark.range(0, 50000, 1, 1).selectExpr("id", "cast(id as decimal(9, 0)) as ss_ext_list_price")
+df.createOrReplaceTempView("test_table")
+sql("select avg(distinct ss_ext_list_price), sum(distinct ss_ext_list_price) from test_table").explain

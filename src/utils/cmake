@@ -1,0 +1,33 @@
+静态链接:
+https://github.com/apache/incubator-brpc/blob/master/docs/cn/getting_started.md
+$ cmake . -DBUILD_SHARED_LIBS=1 -DBUILD_STATIC_LIBS=1
+$ make
+
+cd incubator-doris/thirdparty/src/incubator-brpc-0.9.5/doris_build/
+TP_INSTALL_DIR=/home/xiaoxing/idea-workspace/incubator-doris/thirdparty/installed
+TP_LIB_DIR=/home/xiaoxing/idea-workspace/incubator-doris/thirdparty/installed/lib
+
+LDFLAGS="-L${TP_LIB_DIR} -static-libstdc++ -static-libgcc" \
+    cmake -v -DBUILD_SHARED_LIBS=0 -DCMAKE_INSTALL_PREFIX=$TP_INSTALL_DIR \
+    -DBRPC_WITH_GLOG=ON -DWITH_GLOG=ON -DCMAKE_INCLUDE_PATH="$TP_INSTALL_DIR/include" \
+    -DCMAKE_LIBRARY_PATH="$TP_INSTALL_DIR/lib;$TP_INSTALL_DIR/lib64" \
+    -DPROTOBUF_PROTOC_EXECUTABLE=$TP_INSTALL_DIR/bin/protoc \
+    -DProtobuf_PROTOC_EXECUTABLE=$TP_INSTALL_DIR/bin/protoc ..
+make -j1
+
+ar x ~/idea-workspace/incubator-doris/thirdparty/src/snappy-1.1.7/doris_build/libsnappy.a
+
+xiaoxing@xiaoxing-ubuntu:/tmp/testsnappy$ objdump -t snappy-c.cc.o | grep GetUncompressedLength
+0000000000000000         *UND*	0000000000000000 _ZN6snappy21GetUncompressedLengthEPKcmPm
+xiaoxing@xiaoxing-ubuntu:/tmp/testsnappy$ objdump -t snappy.cc.o | grep GetUncompressedLength
+0000000000000020 g     F .text	00000000000000af _ZN6snappy21GetUncompressedLengthEPKcmPm
+0000000000000eb0 g     F .text	00000000000000db _ZN6snappy21GetUncompressedLengthEPNS_6SourceEPj
+xiaoxing@xiaoxing-ubuntu:/tmp/testsnappy$ 
+
+link文件目录:incubator-doris/thirdparty/src/incubator-brpc-0.9.5/doris_build/src/CMakeFiles/protoc-gen-mcpack.dir/link.txt
+/usr/bin/c++  -DBRPC_WITH_GLOG=1 -DGFLAGS_NS=google -DBTHREAD_USE_FAST_PTHREAD_MUTEX -D__const__= -D_GNU_SOURCE -DUSE_SYMBOLIZE -DNO_TCMALLOC -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS -DBRPC_REVISION=\"aae942b9\" -D__STRICT_ANSI__ -g  -O2 -pipe -Wall -W -fPIC -fstrict-aliasing -Wno-invalid-offsetof -Wno-unused-parameter -fno-omit-frame-pointer -msse4 -msse4.2 -Wno-aligned-new -DNDEBUG -L/home/xiaoxing/idea-workspace/incubator-doris/thirdparty/installed/lib -static-libstdc++ -static-libgcc -rdynamic CMakeFiles/protoc-gen-mcpack.dir/mcpack2pb/generator.cpp.o -o ../output/bin/protoc-gen-mcpack  -Wl,-rpath,/home/xiaoxing/idea-workspace/incubator-doris/thirdparty/src/incubator-brpc-0.9.5/doris_build/output/lib ../output/lib/libbrpc.so -Wl,-Bstatic -lgflags -lprotobuf -Wl,-Bdynamic -lpthread -Wl,-Bstatic -lleveldb -lprotoc -lssl -lcrypto -Wl,-Bdynamic -ldl -lpthread -Wl,-Bstatic -lleveldb -lprotoc -lssl -lcrypto -Wl,-Bdynamic -ldl -lz -Wl,-Bstatic -lglog -Wl,-Bdynamic -lrt -Wl,-Bstatic -lglog -Wl,-Bdynamic -lrt
+可能原因:上面漏了-lsnappy
+可以执行:
+/usr/bin/c++  -DBRPC_WITH_GLOG=1 -DGFLAGS_NS=google -DBTHREAD_USE_FAST_PTHREAD_MUTEX -D__const__= -D_GNU_SOURCE -DUSE_SYMBOLIZE -DNO_TCMALLOC -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS -DBRPC_REVISION=\"aae942b9\" -D__STRICT_ANSI__ -g  -O2 -pipe -Wall -W -fPIC -fstrict-aliasing -Wno-invalid-offsetof -Wno-unused-parameter -fno-omit-frame-pointer -msse4 -msse4.2 -Wno-aligned-new -DNDEBUG -L/home/xiaoxing/idea-workspace/incubator-doris/thirdparty/installed/lib -static-libstdc++ -static-libgcc -rdynamic CMakeFiles/protoc-gen-mcpack.dir/mcpack2pb/generator.cpp.o -o ../output/bin/protoc-gen-mcpack  -Wl,-rpath,/home/xiaoxing/idea-workspace/incubator-doris/thirdparty/src/incubator-brpc-0.9.5/doris_build/output/lib ../output/lib/libbrpc.so -Wl,-Bstatic -lgflags -lprotobuf -Wl,-Bdynamic -lpthread -Wl,-Bstatic -lsnappy -lleveldb -lprotoc -lssl -lcrypto -Wl,-Bdynamic -ldl -lpthread -Wl,-Bstatic -lleveldb -lprotoc -lssl -lcrypto -Wl,-Bdynamic -ldl -lz -Wl,-Bstatic -lglog -Wl,-Bdynamic -lrt -Wl,-Bstatic -lglog -Wl,-Bdynamic -lrt
+执行目录:
+incubator-doris/thirdparty/src/incubator-brpc-0.9.5/doris_build/src
