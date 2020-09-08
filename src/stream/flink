@@ -3,3 +3,96 @@ org.apache.flink.runtime.io.network.buffer.LocalBufferPool#requestBuffer
 
 org.apache.flink.runtime.io.network.buffer.LocalBufferPool.SubpartitionBufferRecycler#recycle
 
+
+java -cp $FLINK_HOME/lib/*:$FLINK_HOME/opt/*:$HADOOP_HOME/share/hadoop/hdfs/*:$HADOOP_HOME/share/hadoop/tools/lib/*:$HADOOP_HOME/share/hadoop/yarn/*:$HADOOP_HOME/share/hadoop/common/*:$HADOOP_HOME/etc/hadoop org.apache.flink.table.client.SqlClient embedded
+
+账单source:
+drop table bill_info;
+create table bill_info (
+    billCode string,
+    serviceCode string,
+    accountPeriod string,
+    subjectName string,
+    occurDate timestamp,
+    subjectCode string,
+    amt decimal(11,2),
+    status string,
+    proc_time as proctime() --使用维表时需要的字段
+) with (
+    'connector' = 'mysql-cdc',
+    'hostname' = 'localhost',
+    'port' = '3306',
+    'username' = 'root',
+    'password' = '123456',
+    'database-name' = 'cdc',
+    'table-name' = 'bill_detail'
+);
+
+drop table order_info;
+create table order_info (
+    orderCode string,
+    serviceCode string,
+    accountPeriod string,
+    subjectName string,
+    subjectCode string,
+    occurDate timestamp,
+    amt decimal(11,2),
+    status string,
+    proc_time as proctime() --使用维表时需要的字段
+) with (
+    'connector' = 'mysql-cdc',
+    'hostname' = 'localhost',
+    'port' = '3306',
+    'username' = 'root',
+    'password' = '123456',
+    'database-name' = 'cdc',
+    'table-name' = 'order_detail'
+);
+
+科目维表:
+create table subject_info (
+    code varchar(32) not null,
+    name varchar(64) not null,
+    primary key (code) not enforced -- 主键
+) with (
+    'connector' = 'jdbc',
+    'url' = 'jdbc:mysql://localhost:3306/default?useSSL=false&autoReconnect=true',
+    'driver' = 'com.mysql.cj.jdbc.Driver',
+    'table-name' = 'subject_detail',
+    'username' = 'root',
+    'password' = '123456',
+    'lookup.cache.max-rows' = '3000',
+    'lookup.cache.ttl' = '10s',
+    'lookup.max-retries' = '3'
+);
+
+实收分布结果表:
+create table income_distribution (
+    serviceCode string,
+    accountPeriod   string,
+    subjectCode string,
+    subjectName string,
+    amt decimal(13,2),
+    primary key (serviceCode, accountPeriod, subjectCode) not enforced
+) with (
+    'connector' = 'elasticsearch-7',
+    'hosts' = 'http://localhost:9200',
+    'index' = 'income_distribution',
+    'sink.bulk-flush.backoff.strategy' = 'expotential'
+);
+
+触发job:
+insert into income_distribution 
+select t1.serviceCode, t1.accountPeriod,t1.subjectCode,  t1.subjectName, sum(amt) as amt
+from (
+    select b.serviceCode, b.accountPeriod, b.subjectCode, s.name as subjectName, sum(amt) as amt
+    from bill_info as b
+    join subject_info for system_time as of b.proc_time s on b.subjectCode = s.code
+    group by b.serviceCode, b.accountPeriod, b.subjectCode, s.name
+    union all
+    select b.serviceCode, b.accountPeriod, b.subjectCode, s.name as subjectName, sum(amt) as amt
+    from order_info as b
+    join subject_info for system_time as of b.proc_time s on b.subjectCode = s.code
+    group by b.serviceCode, b.accountPeriod, b.subjectCode, s.name
+) as t1
+group by t1.serviceCode, t1.accountPeriod, t1.subjectCode, t1.subjectName;
