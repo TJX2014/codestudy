@@ -46,3 +46,65 @@ worker: $DORIS_HOME/be/storage
 $DORIS_HOME/be/lib/palo_be
 bin/start_be.sh --daemon
 
+planner -> coordinator
+
+http://doris.apache.org/master/zh-CN/getting-started/basic-usage.html#_3-%E6%95%B0%E6%8D%AE%E7%9A%84%E6%9F%A5%E8%AF%A2
+ 注意：慎用mysql-workbench, 在启动的时候会发送查询sql导致没有backend报错
+mysql -h172.26.160.38 -P9030 -u root
+新增backend: (ip:heartbeat_service_port)
+alter system add backend "172.26.160.38:9050";
+查看backend:
+show proc '/backends';
+
+create database test_doris;
+建表：
+CREATE TABLE table1
+(
+    siteid INT DEFAULT '10',
+    citycode SMALLINT,
+    username VARCHAR(32) DEFAULT '',
+    pv BIGINT SUM DEFAULT '0'
+)
+AGGREGATE KEY(siteid, citycode, username)
+DISTRIBUTED BY HASH(siteid) BUCKETS 10
+PROPERTIES("replication_num" = "1");
+
+CREATE USER 'test' IDENTIFIED BY 'test_passwd';
+GRANT ALL ON test_doris TO test;
+
+cat table1.data:
+1,1,jim,2
+2,1,grace,2
+3,2,tom,2
+4,3,bush,3
+5,3,helen,3
+curl -v --location-trusted -u test:test_passwd -H "label:table1_20170707" -H "column_separator:," -T table1.data http://172.26.160.38:8030/api/test_doris/table1/_stream_load
+
+CREATE TABLE table2
+(
+    event_day DATE,
+    siteid INT DEFAULT '10',
+    citycode SMALLINT,
+    username VARCHAR(32) DEFAULT '',
+    pv BIGINT SUM DEFAULT '0'
+)
+AGGREGATE KEY(event_day, siteid, citycode, username)
+PARTITION BY RANGE(event_day)
+(
+    PARTITION p201706 VALUES LESS THAN ('2017-07-01'),
+    PARTITION p201707 VALUES LESS THAN ('2017-08-01'),
+    PARTITION p201708 VALUES LESS THAN ('2017-09-01')
+)
+DISTRIBUTED BY HASH(siteid) BUCKETS 10
+PROPERTIES("replication_num" = "1");
+
+cat table2.data:
+2017-07-03|1|1|jim|2
+2017-07-05|2|1|grace|2
+2017-07-12|3|2|tom|2
+2017-07-15|4|3|bush|3
+2017-07-12|5|3|helen|3
+curl --location-trusted -u test:test_passwd -H "label:table2_20170707" -H "column_separator:|" -T table2.data http://127.0.0.1:8030/api/test_doris/table2/_stream_load
+
+ SELECT SUM(table1.pv) FROM table1 JOIN table2 WHERE table1.siteid = table2.siteid;
+ SELECT SUM(pv) FROM table2 WHERE siteid IN (SELECT siteid FROM table1 WHERE siteid > 2);
