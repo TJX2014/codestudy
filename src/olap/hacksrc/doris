@@ -1,0 +1,36 @@
+fe analysis:
+"doris-mysql-nio-pool-1" #125 daemon prio=5 os_prio=0 tid=0x00007f48e40b4800 nid=0x40ff in Object.wait() [0x00007f491d4b3000]
+   java.lang.Thread.State: TIMED_WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        at com.baidu.jprotobuf.pbrpc.client.ProtobufRpcProxy.doWaitCallback(ProtobufRpcProxy.java:600)
+        - locked <0x000000078637c378> (a com.baidu.jprotobuf.pbrpc.transport.BlockingRpcCallback)
+        at com.baidu.jprotobuf.pbrpc.client.ProtobufRpcProxy.access$000(ProtobufRpcProxy.java:51)
+        at com.baidu.jprotobuf.pbrpc.client.ProtobufRpcProxy$2.get(ProtobufRpcProxy.java:549)
+        at org.apache.doris.qe.ResultReceiver.getNext(ResultReceiver.java:79)
+        at org.apache.doris.qe.Coordinator.getNext(Coordinator.java:652)
+        at org.apache.doris.qe.StmtExecutor.handleQueryStmt(StmtExecutor.java:754)
+        at org.apache.doris.qe.StmtExecutor.execute(StmtExecutor.java:274)
+        at org.apache.doris.qe.ConnectProcessor.handleQuery(ConnectProcessor.java:193)
+        at org.apache.doris.qe.ConnectProcessor.dispatch(ConnectProcessor.java:325)
+        at org.apache.doris.qe.ConnectProcessor.processOnce(ConnectProcessor.java:510)
+        at org.apache.doris.mysql.nio.ReadListener.lambda$handleEvent$0(ReadListener.java:50)
+        at org.apache.doris.mysql.nio.ReadListener$$Lambda$57/579864387.run(Unknown Source)
+
+be analysis:
+doris::RowBatch::get_row row_batch.h:186
+doris::RowBatch::total_byte_size row_batch.cpp:617
+doris::RowBatch::serialize row_batch.cpp:382
+doris::DataStreamSender::serialize_batch<doris::PRowBatch> data_stream_sender.cpp:633
+doris::DataStreamSender::send data_stream_sender.cpp:453
+doris::PlanFragmentExecutor::open_internal plan_fragment_executor.cpp:298
+doris::PlanFragmentExecutor::open plan_fragment_executor.cpp:248
+doris::FragmentExecState::execute fragment_mgr.cpp:219
+doris::FragmentMgr::exec_actual(std::shared_ptr<doris::FragmentExecState>, std::function<void (doris::PlanFragmentExecutor*)>) fragment_mgr.cpp:426
+
+join:
+doris::HashJoinNode::get_next hash_join_node.cpp:386
+doris::PartitionedAggregationNode::open partitioned_aggregation_node.cc:318
+doris::PlanFragmentExecutor::open_internal plan_fragment_executor.cpp:264
+doris::PlanFragmentExecutor::open plan_fragment_executor.cpp:248
+doris::FragmentExecState::execute fragment_mgr.cpp:219
+doris::FragmentMgr::exec_actual(std::shared_ptr<doris::FragmentExecState>, std::function<void (doris::PlanFragmentExecutor*)>) fragment_mgr.cpp:426

@@ -3,6 +3,10 @@ https://github.com/apache/incubator-brpc/blob/master/docs/cn/getting_started.md
 $ cmake . -DBUILD_SHARED_LIBS=1 -DBUILD_STATIC_LIBS=1
 $ make
 
+debug/release版本:
+make -DCMAKE_BUILD_TYPE=Debug ..
+cmake -DCMAKE_BUILD_TYPE=Release .. 
+
 cd incubator-doris/thirdparty/src/incubator-brpc-0.9.5/doris_build/
 TP_INSTALL_DIR=/home/xiaoxing/idea-workspace/incubator-doris/thirdparty/installed
 TP_LIB_DIR=/home/xiaoxing/idea-workspace/incubator-doris/thirdparty/installed/lib
@@ -15,6 +19,7 @@ LDFLAGS="-L${TP_LIB_DIR} -static-libstdc++ -static-libgcc" \
     -DProtobuf_PROTOC_EXECUTABLE=$TP_INSTALL_DIR/bin/protoc ..
 make -j1
 
+objdump -t ~/idea-workspace/incubator-doris/thirdparty/src/snappy-1.1.7/doris_build/libsnappy.a
 ar x ~/idea-workspace/incubator-doris/thirdparty/src/snappy-1.1.7/doris_build/libsnappy.a
 
 xiaoxing@xiaoxing-ubuntu:/tmp/testsnappy$ objdump -t snappy-c.cc.o | grep GetUncompressedLength
@@ -32,7 +37,6 @@ link文件目录:incubator-doris/thirdparty/src/incubator-brpc-0.9.5/doris_build
 执行目录:
 incubator-doris/thirdparty/src/incubator-brpc-0.9.5/doris_build/src
 
-
 ./cmake-build-debug/src/service/CMakeFiles/palo_be.dir/link.txt
 
 调试启动be:
@@ -40,8 +44,8 @@ incubator-doris/thirdparty/src/incubator-brpc-0.9.5/doris_build/src
 /usr/bin/g++   -Wall -Wno-sign-compare -Wno-unknown-pragmas -pthread -fno-strict-aliasing -fno-omit-frame-pointer -std=gnu++11 -D__STDC_FORMAT_MACROS -Wno-deprecated -Wno-vla -DBOOST_DATE_TIME_POSIX_TIME_STD_CONFIG -DBOOST_SYSTEM_NO_DEPRECATED -msse4.2  -Wno-attributes -DS2_USE_GFLAGS -DS2_USE_GLOG -DDORIS_WITH_MYSQL -faligned-new  -g -Wno-unused-local-typedefs -Werror -ggdb -O0 -gdwarf-2 -g  -rdynamic service/CMakeFiles/palo_be.dir/doris_main.cpp.o  -o palo_be  -Wl,--start-group ./agent/libAgent.a ./common/libCommon.a ./env/libEnv.a ./exec/libExec.a ./exprs/libExprs.a ./gutil/libGutil.a ./olap/memory/libMemory.a ./olap/libOlap.a ./olap/rowset/libRowset.a ./olap/fs/libOlapFs.a ./runtime/libRuntime.a ./service/libService.a ./udf/libUdf.a ./util/libUtil.a ./gen_cpp/libDorisGen.a ./http/libWebserver.a ./testutil/libTestUtil.a ./geo/libGeo.a ./plugin/libPlugin.a -Wl,--end-group -Wl,--start-group /var/local/thirdparty/installed//lib/librocksdb.a /var/local/thirdparty/installed//lib/librdkafka++.a /var/local/thirdparty/installed//lib/librdkafka.a /var/local/thirdparty/installed//lib/libs2.a /var/local/thirdparty/installed//lib/libsnappy.a /var/local/thirdparty/installed/lib/libboost_thread.a -lpthread /var/local/thirdparty/installed/lib/libboost_regex.a /var/local/thirdparty/installed/lib/libboost_filesystem.a /var/local/thirdparty/installed/lib/libboost_system.a /var/local/thirdparty/installed/lib/libboost_date_time.a /var/local/thirdparty/installed/lib/libboost_program_options.a /var/local/thirdparty/installed/lib/libboost_chrono.a /var/local/thirdparty/installed/lib/libboost_atomic.a /var/local/thirdparty/installed//lib/libthrift.a /var/local/thirdparty/installed//lib/libthriftnb.a /var/local/thirdparty/installed//lib/libglog.a /var/local/thirdparty/installed//lib/libre2.a /var/local/thirdparty/installed//gperftools/lib/libprofiler.a /var/local/thirdparty/installed//lib/liblz4.a /var/local/thirdparty/installed//lib/libevent.a /var/local/thirdparty/installed//lib/libevent_pthreads.a /var/local/thirdparty/installed//lib/libcurl.a /var/local/thirdparty/installed//lib/libz.a /var/local/thirdparty/installed//lib/libbz2.a /var/local/thirdparty/installed//lib/libgflags.a /var/local/thirdparty/installed//lib64/libbrpc.a /var/local/thirdparty/installed//lib/libprotobuf.a /var/local/thirdparty/installed//lib/libssl.a /var/local/thirdparty/installed//lib/libcrypto.a /var/local/thirdparty/installed//lib/libleveldb.a /var/local/thirdparty/installed//lib/libbitshuffle.a /var/local/thirdparty/installed//lib/libroaring.a /var/local/thirdparty/installed//lib64/libdouble-conversion.a /var/local/thirdparty/installed//lib64/libjemalloc.a /var/local/thirdparty/installed//lib64/libbrotlicommon.a /var/local/thirdparty/installed//lib64/libbrotlidec.a /var/local/thirdparty/installed//lib64/libbrotlienc.a /var/local/thirdparty/installed//lib64/libzstd.a /var/local/thirdparty/installed//lib64/libarrow.a /var/local/thirdparty/installed//lib64/libparquet.a /var/local/thirdparty/installed//lib/liborc.a /var/local/thirdparty/installed//lib/libodbc.a /var/local/thirdparty/installed//lib/libcctz.a -Wl,--end-group /var/local/thirdparty/installed//lib/libmysqlclient.a -static-libstdc++ -static-libgcc /var/local/thirdparty/installed//gperftools/lib/libtcmalloc.a -lrt -lbfd -liberty -lc -lm -ldl -pthread 
 
 调试curl:
-CPPFLAGS="-I/var/local/thirdparty/installed/include" \
+export CPPFLAGS="-I/var/local/thirdparty/installed/include" \
     LDFLAGS="-L/var/local/thirdparty/installed/lib" LIBS="-lcrypto -lssl -lcrypto -ldl" \
     CFLAGS="-fPIC" \
-    ./configure --prefix=/tmp/curl-test --disable-shared --enable-static \
-    --without-librtmp --with-ssl=/var/local/thirdparty/installed/lib --without-libidn2 --disable-ldap --enable-ipv6
+ ./configure --prefix=/tmp/curl-test --disable-shared --enable-static \
+    --without-librtmp --with-ssl=/var/local/thirdparty/installed/lib --without-libidn2 --with-nghttp2 --disable-ldap --enable-ipv6

@@ -108,3 +108,56 @@ curl --location-trusted -u test:test_passwd -H "label:table2_20170707" -H "colum
 
  SELECT SUM(table1.pv) FROM table1 JOIN table2 WHERE table1.siteid = table2.siteid;
  SELECT SUM(pv) FROM table2 WHERE siteid IN (SELECT siteid FROM table1 WHERE siteid > 2);
+
+spark load流程:
+http://doris.apache.org/master/zh-CN/administrator-guide/load-data/spark-load-manual.html#%E5%88%9B%E5%BB%BA%E5%AF%BC%E5%85%A5
+
+启动配置broker: 将apache_hdfs_broker.conf, apache_hdfs_broker.jar(来自doris里的incubator-doris/fs_brokers), start_broker.sh放到fe下的对应conf,lib,bin下
+bin/start_broker.sh
+
+alter system add broker  broker1 "172.26.160.38:8000";
+show proc '/brokers';
+CREATE EXTERNAL RESOURCE "spark2"
+PROPERTIES
+(
+  "type" = "spark",
+  "spark.master" = "spark://127.0.0.1:7077",
+  "spark.submit.deployMode" = "client",
+  "working_dir" = "hdfs://127.0.0.1:8020/tmp/doris",
+  "broker" = "broker1"
+);
+show proc '/resources';
+
+导入数据:
+use test_doris;
+create table tbl1(id int, name varchar(255)) DISTRIBUTED BY HASH(id) BUCKETS 10 PROPERTIES("replication_num" = "1");
+create table tbl2(col1 varchar(255), col2 varchar(255)) DISTRIBUTED BY HASH(col1) BUCKETS 10 PROPERTIES("replication_num" = "1");
+LOAD LABEL test_doris.label1
+(
+    DATA INFILE("hdfs://localhost:8020/user/palo/test/ml/file1")
+    INTO TABLE tbl1
+    COLUMNS TERMINATED BY ","
+    (tmp_c1,tmp_c2)
+    SET
+    (
+        id=tmp_c2,
+        name=tmp_c1
+    ),
+    DATA INFILE("hdfs://localhost:8020/user/palo/test/ml/file2")
+    INTO TABLE tbl2
+    COLUMNS TERMINATED BY ","
+    (col1, col2)
+    where col1 > 1
+)
+WITH RESOURCE 'spark2'
+(
+    "spark.executor.memory" = "1g",
+    "spark.shuffle.compress" = "true"
+)
+PROPERTIES
+(
+    "timeout" = "3600"
+);
+
+查看任务执行结果:
+show load order by createtime desc limit 1\G;
