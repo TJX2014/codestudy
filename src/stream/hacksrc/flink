@@ -1,0 +1,17 @@
+deploy option:
+configuration.set(DeploymentOptions.TARGET, "yarn-per-job")
+
+sqlclient deploy:
+at org.apache.hadoop.yarn.client.api.impl.YarnClientImpl.getNodeReports(YarnClientImpl.java:598)
+        at org.apache.flink.yarn.YarnClientYarnClusterInformationRetriever.getMaxVcores(YarnClientYarnClusterInformationRetriever.java:43)
+        at org.apache.flink.yarn.YarnClusterDescriptor.isReadyForDeployment(YarnClusterDescriptor.java:307)
+        at org.apache.flink.yarn.YarnClusterDescriptor.deployInternal(YarnClusterDescriptor.java:507)
+        at org.apache.flink.yarn.YarnClusterDescriptor.deployJobCluster(YarnClusterDescriptor.java:451)
+        at org.apache.flink.client.deployment.executors.AbstractJobClusterExecutor.execute(AbstractJobClusterExecutor.java:70)
+        at org.apache.flink.table.client.gateway.local.ProgramDeployer.deploy(ProgramDeployer.java:82)
+        at org.apache.flink.table.client.gateway.local.LocalExecutor.lambda$executeUpdateInternal$4(LocalExecutor.java:495)
+        at org.apache.flink.table.client.gateway.local.LocalExecutor$$Lambda$886/163843907.get(Unknown Source)
+        at org.apache.flink.table.client.gateway.local.ExecutionContext.wrapClassLoader(ExecutionContext.java:257)
+        at org.apache.flink.table.client.gateway.local.LocalExecutor.executeUpdateInternal(LocalExecutor.java:492)
+        at org.apache.flink.table.client.gateway.local.LocalExecutor.executeUpdate(LocalExecutor.java:415)
+        at org.apache.flink.table.client.cli.CliClient.callInsert(CliClient.java:675)
