@@ -8,6 +8,11 @@ configure: WARNING: Ignoring CXXFLAGS(-Wno-error) found in environment. Use --wi
 bash configure --with-extra-cflags=-Wno-error  --with-extra-cxxflags=-Wno-error --with-debug-level=slowdebug --with-native-debug-symbols=internal
 make CONF=linux-x86_64-normal-server-slowdebug
 
+notice:
+#include "classfile/classFileParser.hpp"
+#include "runtime/perfData.hpp"
+使用以上相对路径,需要在CMakeLists.txt中include_directories(hotspot/src/share/vm)
+
 https://zhuanlan.zhihu.com/p/50220757
 --with-native-debug-symbols=internal
 
