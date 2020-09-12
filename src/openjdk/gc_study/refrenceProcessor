@@ -1,0 +1,19 @@
+size_t
+ReferenceProcessor::process_discovered_reflist(
+  DiscoveredList               refs_lists[],
+  ReferencePolicy*             policy,
+  bool                         clear_referent,
+  BoolObjectClosure*           is_alive,
+  OopClosure*                  keep_alive,
+  VoidClosure*                 complete_gc,
+  AbstractRefProcTaskExecutor* task_executor)
+{
+  bool mt_processing = task_executor != NULL && _processing_is_mt;
+  // If discovery used MT and a dynamic number of GC threads, then
+  // the queues must be balanced for correctness if fewer than the
+  // maximum number of queues were used.  The number of queue used
+  // during discovery may be different than the number to be used
+  // for processing so don't depend of _num_q < _max_num_q as part
+  // of the test.
+
+  notice: phase1(soft refs only) -> phase2( Traverse the list and remove any refs whose referents are alive) -> phase3(Traverse the list and process referents as appropriate.)
