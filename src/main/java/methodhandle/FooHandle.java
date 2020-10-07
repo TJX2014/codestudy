@@ -26,7 +26,10 @@ public class FooHandle {
             e.printStackTrace();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
+        } finally {
+            System.out.println("end bye~");
         }
+
     }
 
 }
