@@ -1,0 +1,44 @@
+
+gc入口:
+hotspot/src/share/vm/memory/genCollectedHeap.cpp:504
+          _gens[i]->collect(full, do_clear_all_soft_refs, size, is_tlab);
+
+hotspot/src/share/vm/runtime/vmThread.cpp:513
+SafepointSynchronize::begin();
+        evaluate_operation(_cur_vm_operation);
+        // now process all queued safepoint ops, iteratively draining
+        // the queue until there are none left
+        do {
+
+enter safe point:
+hotspot/src/share/vm/runtime/safepoint.cpp:167
+// Roll all threads forward to a safepoint and suspend them all
+void SafepointSynchronize::begin() {
+  EventSafepointBegin begin_event;
+
+gc调整pointer位置:
+int InstanceKlass::oop_adjust_pointers(oop obj) {
+  int size = size_helper();
+  InstanceKlass_OOP_MAP_ITERATE( \
+    obj, \
+    MarkSweep::adjust_pointer(p), \
+    assert_is_in)
+MarkSweep::adjust_pointer(p)->
+  if (new_obj != NULL) {
+      assert(Universe::heap()->is_in_reserved(new_obj),
+             "should be in object space");
+      oopDesc::encode_store_heap_oop_not_null(p, new_obj);
+    }
+
+hotspot/src/share/vm/memory/genMarkSweep.hpp:40:
+    // Mark live objects
+  static void mark_sweep_phase1(int level, bool clear_all_softrefs);
+  // Calculate new addresses
+  static void mark_sweep_phase2();
+  // Update pointers
+  static void mark_sweep_phase3(int level);
+  // Move objects to new positions
+  static void mark_sweep_phase4();
+
+g1重构eden分区:
+hotspot/src/share/vm/gc_implementation/g1/g1CollectorPolicy.cpp:537
