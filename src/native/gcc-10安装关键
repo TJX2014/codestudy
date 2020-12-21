@@ -1,0 +1,16 @@
+依赖：gmp, mpfr, mpc
+https://gmplib.org/
+https://www.mpfr.org/mpfr-current/#download
+ftp://gnu.mirror.iweb.com/mpc
+./configure --with-gmp=/usr/local/gmp-6.2.1 --with-mpfr=/usr/local/mpfr-4.1.0 --with-mpc=/usr/local/mpc-1.2.1
+
+
+https://clickhouse.tech/docs/en/development/build/amp/
+新版ubuntu:
+sudo apt-get install gcc-10 g++-10
+
+旧版
+$ sudo apt-get install software-properties-common
+$ sudo apt-add-repository ppa:ubuntu-toolchain-r/test
+$ sudo apt-get update
+$ sudo apt-get install gcc-10 g++-10
