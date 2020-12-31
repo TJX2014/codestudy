@@ -8,6 +8,9 @@ configure: WARNING: Ignoring CXXFLAGS(-Wno-error) found in environment. Use --wi
 bash configure --with-extra-cflags=-Wno-error  --with-extra-cxxflags=-Wno-error --with-debug-level=slowdebug --with-native-debug-symbols=internal
 make CONF=linux-x86_64-normal-server-slowdebug
 
+bash configure --disable-warnings-as-errors --with-extra-cflags=-Wno-error,-Wno-deprecated-declarations  --with-extra-cxxflags=-Wno-error,-Wno-deprecated-declarations --with-debug-level=slowdebug --with-native-debug-symbols=internal
+
+
 notice:
 #include "classfile/classFileParser.hpp"
 #include "runtime/perfData.hpp"
