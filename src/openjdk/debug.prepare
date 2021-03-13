@@ -1,3 +1,13 @@
+openjdk编译hsdis:
+openjdk-11/openjdk/src/utils/hsdis
+https://www.morling.dev/blog/building-hsdis-for-openjdk-15/
+https://bugs.openjdk.java.net/browse/JDK-8191006
+wget https://ftp.gnu.org/gnu/binutils/binutils-2.28.tar.gz
+make BINUTILS=binutils-2.28 ARCH=amd64
+-XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly \
+ -XX:+TraceClassLoading -XX:+LogCompilation
+
+
 https://github.com/openjdk/jdk/tree/jdk8-b120
 
 https://github.com/Tencent/TencentKona-8
