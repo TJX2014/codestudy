@@ -1,3 +1,6 @@
+vscode中打印数组内容
+-exec p/s (**(*_methods@1)._data)->constants()
+
 openjdk编译hsdis:
 openjdk-11/openjdk/src/utils/hsdis
 https://www.morling.dev/blog/building-hsdis-for-openjdk-15/
