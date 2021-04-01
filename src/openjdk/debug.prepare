@@ -1,6 +1,9 @@
 vscode中打印数组内容
 -exec p/s (**(*_methods@1)._data)->constants()
 
+调试callstub(call java from c)
+-exec p/s ((StubRoutines::CallStub)StubRoutines::_call_stub_entry)((address)&link, result_val_address,result_type,method.operator()(),entry_point,args->parameters(),args->size_of_parameters(),thread)
+
 openjdk编译hsdis:
 openjdk-11/openjdk/src/utils/hsdis
 https://www.morling.dev/blog/building-hsdis-for-openjdk-15/
