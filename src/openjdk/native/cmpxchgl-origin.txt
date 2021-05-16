@@ -1,0 +1,32 @@
+template<typename T>
+T changeValue11(T exchange_value,
+                                                T volatile* dest,
+                                                T compare_value) {
+   __asm__ volatile ("lock cmpxchgl %1,(%3)"
+                     : "=a" (exchange_value)
+                     : "r" (exchange_value), "a" (compare_value), "r" (dest)
+                     : "cc", "memory");
+  return exchange_value;
+}
+  
+0000000000000791 <_Z13changeValue11IiET_S0_PVS0_S0_>:
+T changeValue11(T exchange_value,
+ 791:	55                   	push   %rbp
+ 792:	48 89 e5             	mov    %rsp,%rbp
+ 795:	89 7d fc             	mov    %edi,-0x4(%rbp)
+ 798:	48 89 75 f0          	mov    %rsi,-0x10(%rbp)
+ 79c:	89 55 f8             	mov    %edx,-0x8(%rbp)
+                    : "cc", "memory");
+ 79f:	8b 55 fc             	mov    -0x4(%rbp),%edx
+ 7a2:	8b 45 f8             	mov    -0x8(%rbp),%eax
+ 7a5:	48 8b 4d f0          	mov    -0x10(%rbp),%rcx
+ 7a9:	f0 0f b1 11          	lock cmpxchg %edx,(%rcx)
+ 7ad:	89 45 fc             	mov    %eax,-0x4(%rbp)
+  return exchange_value;
+ 7b0:	8b 45 fc             	mov    -0x4(%rbp),%eax
+}
+ 7b3:	5d                   	pop    %rbp
+ 7b4:	c3                   	retq   
+ 7b5:	66 2e 0f 1f 84 00 00 	nopw   %cs:0x0(%rax,%rax,1)
+ 7bc:	00 00 00 
+ 7bf:	90 
